@@ -1,0 +1,14 @@
+/target/
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ IDEA
+out/
+.idea/
+.idea
+.idea/*
+/FluxiousApplet.iml
+/.idea/
