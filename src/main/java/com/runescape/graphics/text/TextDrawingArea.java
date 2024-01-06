@@ -118,17 +118,17 @@ public class TextDrawingArea extends DrawingArea {
 		return j;
 	}
 
-	public void method385(int i, String s, int j, int l) {
-		if (s == null) {
+	public void method385(int colour, String text, int yPos, int xPos) {
+		if (text == null) {
 			return;
 		}
-		j -= yOffset;
-		for (int i1 = 0; i1 < s.length(); i1++) {
-			char c = s.charAt(i1);
+		yPos -= yOffset;
+		for (int i1 = 0; i1 < text.length(); i1++) {
+			char c = text.charAt(i1);
 			if (c != ' ') {
-				method392(aByteArrayArray1491[c], l + anIntArray1494[c], j + anIntArray1495[c], anIntArray1492[c], anIntArray1493[c], i);
+				method392(aByteArrayArray1491[c], xPos + anIntArray1494[c], yPos + anIntArray1495[c], anIntArray1492[c], anIntArray1493[c], colour);
 			}
-			l += anIntArray1496[c];
+			xPos += anIntArray1496[c];
 		}
 	}
 

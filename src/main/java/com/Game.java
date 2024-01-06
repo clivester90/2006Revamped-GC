@@ -426,6 +426,7 @@ public class Game extends RSApplet {
 					int i1 = 70 - j * 14 + anInt1089;
 					String s1 = chatNames[k];
 					byte byte0 = 0;
+
 					if (s1 != null && s1.startsWith("@cr1@")) {
 						s1 = s1.substring(5);
 						byte0 = 1;
@@ -520,6 +521,8 @@ public class Game extends RSApplet {
 			} else {
 				s = TextClass.fixName(myUsername);
 			}
+			//TODO - Implement player crown drawing before chat name
+
 			textDrawingArea.method385(0, s + ":", 90, 4);
 			textDrawingArea.method385(255, inputString + "*", 90, 6 + textDrawingArea.getTextWidth(s + ": "));
 			DrawingArea.method339(77, 0, 479, 0);
@@ -1103,8 +1106,11 @@ public class Game extends RSApplet {
 					method65(drawX + class9_1.width, class9_1.height, mouseX, mouseY, class9_1, drawY, true, class9_1.scrollMax);
 				}
 			} else {
+
 				if (class9_1.atActionType == RSInterface.OPTION_OK && mouseX >= drawX && mouseY >= drawY && mouseX < drawX + class9_1.width && mouseY < drawY + class9_1.height) {
-					boolean flag = class9_1.contentType != 0 && buildFriendsListMenu(class9_1);
+					boolean flag = false;
+					if (class9_1.contentType != 0)
+						flag = buildFriendsListMenu(class9_1);
 					if (!flag) {
 						menuActionName[menuActionRow] = showInfo ? class9_1.tooltip + ", " + class9_1.id : class9_1.tooltip;
 						menuActionID[menuActionRow] = 315;
@@ -1116,6 +1122,7 @@ public class Game extends RSApplet {
 						class9_1.toggled = true;
 					}
 				}
+
 				if (class9_1.atActionType == 2 && spellSelected == 0 && mouseX >= drawX && mouseY >= drawY && mouseX < drawX + class9_1.width && mouseY < drawY + class9_1.height) {
 					String s = class9_1.selectedActionName;
 					if (s.contains(" ")) {
@@ -7811,25 +7818,25 @@ public class Game extends RSApplet {
 
 	}
 
-	public void drawInterface(int scrollPos, int k, RSInterface class9, int l) {
-		if (class9.type != 0 || class9.children == null) {
+	public void drawInterface(int scrollPos, int xPos, RSInterface rsi, int yPos) {
+		if (rsi.type != 0 || rsi.children == null) {
 			return;
 		}
-		if (class9.isMouseoverTriggered && anInt1026 != class9.id && anInt1048 != class9.id && anInt1039 != class9.id) {
+		if (rsi.isMouseoverTriggered && anInt1026 != rsi.id && anInt1048 != rsi.id && anInt1039 != rsi.id) {
 			return;
 		}
 		int i1 = DrawingArea.topX;
 		int j1 = DrawingArea.topY;
 		int k1 = DrawingArea.bottomX;
 		int l1 = DrawingArea.bottomY;
-		DrawingArea.setDrawingArea(l + class9.height, k, k + class9.width, l);
-		int i2 = class9.children.length;
+		DrawingArea.setDrawingArea(yPos + rsi.height, xPos, xPos + rsi.width, yPos);
+		int i2 = rsi.children.length;
 		for (int j2 = 0; j2 < i2; j2++) {
-			int k2 = class9.childX[j2] + k;
-			int l2 = class9.childY[j2] + l - scrollPos;
-			RSInterface component = RSInterface.interfaceCache[class9.children[j2]];
-			k2 += component.anInt263;
-			l2 += component.anInt265;
+			int _x = rsi.childX[j2] + xPos;
+			int _y = rsi.childY[j2] + yPos - scrollPos;
+			RSInterface component = RSInterface.interfaceCache[rsi.children[j2]];
+			_x += component.anInt263;
+			_y += component.anInt265;
 			if (component.contentType > 0) {
 				drawFriendsListOrWelcomeScreen(component);
 			}
@@ -7840,17 +7847,17 @@ public class Game extends RSApplet {
 				if (component.scrollPosition < 0) {
 					component.scrollPosition = 0;
 				}
-				drawInterface(component.scrollPosition, k2, component, l2);
+				drawInterface(component.scrollPosition, _x, component, _y);
 				if (component.scrollMax > component.height) {
-					method30(component.height, component.scrollPosition, l2, k2 + component.width, component.scrollMax);
+					method30(component.height, component.scrollPosition, _y, _x + component.width, component.scrollMax);
 				}
 			} else if (component.type != 1) {
 				if (component.type == 2) {
 					int i3 = 0;
 					for (int l3 = 0; l3 < component.height; l3++) {
 						for (int l4 = 0; l4 < component.width; l4++) {
-							int k5 = k2 + l4 * (32 + component.invSpritePadX);
-							int j6 = l2 + l3 * (32 + component.invSpritePadY);
+							int k5 = _x + l4 * (32 + component.invSpritePadX);
+							int j6 = _y + l3 * (32 + component.invSpritePadY);
 							if (i3 < 20) {
 								k5 += component.spritesX[i3];
 								j6 += component.spritesY[i3];
@@ -7880,26 +7887,26 @@ public class Game extends RSApplet {
 												j7 = 0;
 											}
 											class30_sub2_sub1_sub1_2.drawSprite1(k5 + k6, j6 + j7);
-											if (j6 + j7 < DrawingArea.topY && class9.scrollPosition > 0) {
+											if (j6 + j7 < DrawingArea.topY && rsi.scrollPosition > 0) {
 												int i10 = animCycle * (DrawingArea.topY - j6 - j7) / 3;
 												if (i10 > animCycle * 10) {
 													i10 = animCycle * 10;
 												}
-												if (i10 > class9.scrollPosition) {
-													i10 = class9.scrollPosition;
+												if (i10 > rsi.scrollPosition) {
+													i10 = rsi.scrollPosition;
 												}
-												class9.scrollPosition -= i10;
+												rsi.scrollPosition -= i10;
 												anInt1088 += i10;
 											}
-											if (j6 + j7 + 32 > DrawingArea.bottomY && class9.scrollPosition < class9.scrollMax - class9.height) {
+											if (j6 + j7 + 32 > DrawingArea.bottomY && rsi.scrollPosition < rsi.scrollMax - rsi.height) {
 												int j10 = animCycle * (j6 + j7 + 32 - DrawingArea.bottomY) / 3;
 												if (j10 > animCycle * 10) {
 													j10 = animCycle * 10;
 												}
-												if (j10 > class9.scrollMax - class9.height - class9.scrollPosition) {
-													j10 = class9.scrollMax - class9.height - class9.scrollPosition;
+												if (j10 > rsi.scrollMax - rsi.height - rsi.scrollPosition) {
+													j10 = rsi.scrollMax - rsi.height - rsi.scrollPosition;
 												}
-												class9.scrollPosition += j10;
+												rsi.scrollPosition += j10;
 												anInt1088 -= j10;
 											}
 										} else if (atInventoryInterfaceType != 0 && atInventoryIndex == i3 && atInventoryInterface == component.id) {
@@ -7941,18 +7948,25 @@ public class Game extends RSApplet {
 					}
 					if (component.aByte254 == 0) {
 						if (component.aBoolean227) {
-							DrawingArea.method336(component.height, l2, j3, component.width, k2);
+							DrawingArea.method336(component.height, _y, j3, component.width, _x);
 						} else {
-							DrawingArea.fillPixels(l2, component.height, j3, k2, component.width);
+							DrawingArea.fillPixels(_y, component.height, j3, _x, component.width);
 						}
 					} else if (component.aBoolean227) {
-						DrawingArea.method335(j3, l2, component.width, component.height, 256 - (component.aByte254 & 0xff), k2);
+						DrawingArea.method335(j3, _y, component.width, component.height, 256 - (component.aByte254 & 0xff), _x);
 					} else {
-						DrawingArea.method338(l2, component.height, 256 - (component.aByte254 & 0xff), j3, component.width, k2);
+						DrawingArea.method338(_y, component.height, 256 - (component.aByte254 & 0xff), j3, component.width, _x);
 					}
-				} else if (component.type == 4) {
+				} else if (component.type == RSInterface.TYPE_TEXT || component.type == RSInterface.WRAPPING_TEXT) {
 					TextDrawingArea textDrawingArea = component.textDrawingAreas;
-					String s = component.disabledText;
+					String s;
+
+					if (component.type == RSInterface.WRAPPING_TEXT) {
+						s = RSInterface.getWrappedText(textDrawingArea, component.disabledText, component.width);
+					} else {
+						s = component.disabledText;
+					}
+
 					boolean flag1 = anInt1039 == component.id || anInt1048 == component.id || anInt1026 == component.id;
 					int i4;
 					if (interfaceIsSelected(component)) {
@@ -7981,7 +7995,7 @@ public class Game extends RSApplet {
 							i4 = 0xffffff;
 						}
 					}
-					for (int l6 = l2 + textDrawingArea.yOffset; !s.isEmpty(); l6 += textDrawingArea.yOffset) {
+					for (int l6 = _y + textDrawingArea.yOffset; !s.isEmpty(); l6 += textDrawingArea.yOffset) {
 						if (s.contains("%")) {
 							do {
 								int k7 = s.indexOf("%1");
@@ -8029,13 +8043,13 @@ public class Game extends RSApplet {
 							s = "";
 						}
 						if (component.centerText) {
-							textDrawingArea.drawText(i4, k2 + component.width / 2, s1, l6, component.textShadow);
+							textDrawingArea.drawText(i4, _x + component.width / 2, s1, l6, component.textShadow);
 						} else {
-							textDrawingArea.method389(component.textShadow, k2, i4, s1, l6);
+							textDrawingArea.method389(component.textShadow, _x, i4, s1, l6);
 						}
 					}
 
-				} else if (component.type == 5) {
+				} else if (component.type == RSInterface.TYPE_SPRITE) {
 					Sprite sprite;
 					if (interfaceIsSelected(component)) {
 						sprite = component.sprite2;
@@ -8043,13 +8057,13 @@ public class Game extends RSApplet {
 						sprite = component.sprite1;
 					}
 					if (sprite != null) {
-						sprite.drawSprite(k2, l2);
+						sprite.drawSprite(_x, _y);
 					}
 				} else if (component.type == 6) {
 					int k3 = Texture.textureInt1;
 					int j4 = Texture.textureInt2;
-					Texture.textureInt1 = k2 + component.width / 2;
-					Texture.textureInt2 = l2 + component.height / 2;
+					Texture.textureInt1 = _x + component.width / 2;
+					Texture.textureInt2 = _y + component.height / 2;
 					int i5 = Texture.sin[component.modelRotationY] * component.modelZoom >> 16;
 					int l5 = Texture.cos[component.modelRotationY] * component.modelZoom >> 16;
 					boolean flag2 = interfaceIsSelected(component);
@@ -8082,8 +8096,8 @@ public class Game extends RSApplet {
 								if (itemDef.stackable || component.invStackSizes[k4] != 1) {
 									s2 = s2 + " x" + intToKOrMilLongName(component.invStackSizes[k4]);
 								}
-								int i9 = k2 + i6 * (115 + component.invSpritePadX);
-								int k9 = l2 + j5 * (12 + component.invSpritePadY);
+								int i9 = _x + i6 * (115 + component.invSpritePadX);
+								int k9 = _y + j5 * (12 + component.invSpritePadY);
 								if (component.centerText) {
 									textDrawingArea_1.drawText(component.textColour, i9 + component.width / 2, s2, k9, component.textShadow);
 								} else {
@@ -8095,9 +8109,21 @@ public class Game extends RSApplet {
 
 					}
 
-				} else if(component.type == 8) {
-					
 				}
+
+				else if (component.type == RSInterface.TYPE_NEW_HOVER_BUTTON) {
+					if (component.toggled) {
+						component.sprite2.drawSprite(_x, _y);
+						component.toggled = false;
+					} else {
+						component.sprite1.drawSprite(_x, _y);
+					}
+					if (component.centerText)
+						component.textDrawingAreas.drawText(component.textColour, _x + component.width / 2, component.disabledText, _y, component.textShadow);
+					else
+						component.textDrawingAreas.method389(component.textShadow, _x, component.textColour, component.disabledText, _y);
+				}
+
 			}
 		}
 

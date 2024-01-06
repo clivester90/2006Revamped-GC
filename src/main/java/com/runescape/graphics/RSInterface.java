@@ -262,12 +262,10 @@ public class RSInterface {
 
     public static TextDrawingArea[] defaultTextDrawingAreas;
     public static final int OPTION_OK = 1;
-
-    public static final int TYPE_PROGRESS_BAR = 21;
-    public static final int TYPE_TEXT_DRAW_FROM_LEFT = 22;
-    public static final int TYPE_NEW_HOVER_BUTTON = 42;
-    public static final int WRAPPING_TEXT = 44;
-    public static final int TYPE_DROPDOWN = 13;
+    public static final int TYPE_TEXT = 4;
+    public static final int TYPE_SPRITE = 5;
+    public static final int TYPE_NEW_HOVER_BUTTON = 9;
+    public static final int WRAPPING_TEXT = 10;
 
     private static void printFreeIdRange(int minimumFreeSlotsAvailable){
         for(int i = 0; i < interfaceCache.length; i++){
@@ -333,7 +331,7 @@ public class RSInterface {
         RSInterface tab = interfaceCache[id] = new RSInterface();
         tab.id = id;
         tab.parentID = id;
-        tab.type = 5;
+        tab.type = TYPE_SPRITE;
         tab.atActionType = 0;
         tab.contentType = 0;
         tab.opacity = (byte) 0;
@@ -350,10 +348,10 @@ public class RSInterface {
 
     public boolean toggled = false;
 
-    public static void hoverButton(int id, int offSprite, int hoverSprite, String hoverTooltip, int font, int color, String buttonText) {
+    public static void addHoverButton(int id, int offSprite, int hoverSprite, String hoverTooltip, int font, int color, String buttonText) {
         RSInterface tab = addInterface(id);
         tab.tooltip = hoverTooltip;
-        tab.atActionType = 1;
+        tab.atActionType = OPTION_OK;
         tab.type = TYPE_NEW_HOVER_BUTTON;
         tab.sprite1 = Game.spriteCache.lookup(offSprite);
         tab.sprite2 = Game.spriteCache.lookup(hoverSprite);
@@ -368,15 +366,123 @@ public class RSInterface {
         tab.toggled = false;
     }
 
-    public void addTitleText(int id, String text) {
+    public static void hoverButton(int id, int offSprite, int hoverSprite, String hoverTooltip, int font, int color, String buttonText, int msgX, int msgY) {
+        RSInterface tab = addInterface(id);
+        tab.tooltip = hoverTooltip;
+        tab.atActionType = OPTION_OK;
+        tab.type = TYPE_NEW_HOVER_BUTTON;
+        tab.sprite1 = Game.spriteCache.lookup(offSprite);
+        tab.sprite2 = Game.spriteCache.lookup(hoverSprite);
+        tab.width = tab.sprite1.myWidth;
+        tab.height = tab.sprite1.height;
+        tab.messageOffsetX = msgX;
+        tab.messageOffsetY = msgY;
+        tab.disabledText = buttonText;
+        tab.fontType = font;
+        tab.textColour = color;
+        tab.centerText = false;
+        tab.toggled = false;
+    }
+
+    public static void addSmallCloseButton(int id) {
+        addHoverButton(id, 1, 2, "Close", 0, 0, "");
+    }
+
+    public static void addLargeCloseButton(int id) {
+        addHoverButton(id, 1, 2, "Close", 0, 0, "");
+    }
+
+    public static void addTitleText(int id, String text) {
         addText(id, text, ColourConstants.DEFAULT_TEXT_COLOR, true, true, -1, defaultTextDrawingAreas, 2);
+    }
+
+    /**
+     * Adds newlines to a text for a certain TextDrawingArea so each line is never longer than width.
+     * Param tda The textDrawing Area for the text, basically the font
+     * Param text The text to convert to wrapped text
+     * Param width The width above which wrapping is applied
+     * Return The wrapped text
+     */
+    public static String getWrappedText(TextDrawingArea tda, String text, int width) {
+        if (text.contains("\\n") || tda.getTextWidth(text) <= width) {
+            return text;
+        }
+        int spaceWidth = tda.getTextWidth(" ");
+        StringBuilder result = new StringBuilder(text.length());
+        StringBuilder line = new StringBuilder();
+        int lineLength = 0;
+        int curIndex = 0;
+        while (true) {
+            int spaceIndex = text.indexOf(' ', curIndex);
+            int newLength = lineLength;
+            boolean last = false;
+            String curWord;
+            if (spaceIndex < 0) {
+                last = true;
+                curWord = text.substring(curIndex);
+            } else {
+                curWord = text.substring(curIndex, spaceIndex);
+                newLength += spaceWidth;
+            }
+            curIndex = spaceIndex + 1;
+            int w = tda.getTextWidth(curWord);
+            newLength += w;
+            if (newLength > width) {
+                result.append(line);
+                result.append("\\n");
+                line = new StringBuilder(curWord);
+                line.append(' ');
+                lineLength = w;
+            } else {
+                line.append(curWord);
+                line.append(' ');
+                lineLength = newLength;
+            }
+            if (last) {
+                break;
+            }
+        }
+        result.append(line);
+        return result.toString();
+    }
+
+    /**
+     * Adds text with the specified properties. Automatically wraps text so it doesn't exceed width.
+     * Only use for dynamic interfaces as there is some computation to check if wrapping is required.
+     * If static text, use another addText method and pass the text into RSInterface.getWrappedText() firstly.
+     * Param id The child id for the text
+     * Param text The text message
+     * Param tda The tdas available
+     * Param idx The index of the tda to use
+     * Param color The text color
+     * Param center Whether the text is centered
+     * Param shadow Whether the text has shadow
+     * Param width The maximum width of each line before wrapping applies
+     * Return
+     */
+    public static void addWrappingText(int id, String text, TextDrawingArea[] tda, int idx, int color, boolean center, boolean shadow, int width) {
+        RSInterface tab = addInterface(id);
+        tab.parentID = id;
+        tab.id = id;
+        tab.type = WRAPPING_TEXT;
+        tab.atActionType = 0;
+        tab.width = width;
+        tab.height = 11;
+        tab.contentType = 0;
+        tab.opacity = 0;
+        tab.hoverType = -1;
+        tab.textColour = color;
+        tab.centerText = center;
+        tab.textShadow = shadow;
+        tab.textDrawingAreas = tda[idx];
+        tab.disabledText = getWrappedText(tab.textDrawingAreas, text, tab.width);
     }
 
     public static void addText(int id, String text, int colour, boolean center, boolean shadow, int mouseTrigger, TextDrawingArea[] tda, int fontSize) {
         RSInterface RSInterface = addInterface(id);
         RSInterface.parentID = id;
         RSInterface.id = id;
-        RSInterface.type = 4;
+        RSInterface.type = TYPE_TEXT;
         RSInterface.atActionType = 0;
         RSInterface.width = 0;
         RSInterface.height = 0;
@@ -389,6 +495,22 @@ public class RSInterface {
         RSInterface.disabledText = text;
         RSInterface.enabledText = "";
         RSInterface.textColour = colour;
+    }
+
+    public static RSInterface addSprite(int i, int sprite) {
+        RSInterface rsinterface = interfaceCache[i] = new RSInterface();
+        rsinterface.id = i;
+        rsinterface.parentID = i;
+        rsinterface.type = TYPE_SPRITE;
+        rsinterface.atActionType = 0;
+        rsinterface.contentType = 0;
+        rsinterface.width = Game.spriteCache.lookup(sprite).myWidth;
+        rsinterface.height = Game.spriteCache.lookup(sprite).height;
+        rsinterface.aByte254 = 0;
+        rsinterface.mOverInterToTrigger = 52;
+        rsinterface.sprite1 = Game.spriteCache.lookup(sprite);
+        rsinterface.sprite2 = Game.spriteCache.lookup(sprite);
+        return rsinterface;
     }
 
     public static Sprite buildBackground(int width, int height, boolean divider) {

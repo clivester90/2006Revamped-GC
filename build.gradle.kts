@@ -22,6 +22,7 @@ plugins {
     // Apply the java plugin to add support for Java
     id("java")
     id("com.github.johnrengelman.shadow") version "7.1.2"
+    kotlin("jvm") version "1.9.22"
 
 }
 
@@ -73,6 +74,7 @@ dependencies {
     implementation("com.thoughtworks.xstream:xstream:1.4.20")
     // Discord rich presence
     implementation("com.github.Vatuu:discord-rpc:1.6.2")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks {
@@ -123,5 +125,3 @@ tasks {
     }
 
 }
-
-
