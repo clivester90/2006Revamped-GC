@@ -1,6 +1,7 @@
 package com.runescape.graphics.builder.impl;
 
 import com.runescape.graphics.builder.InterfaceBuilder;
+import com.runescape.graphics.dropdown.impl.GameModeSelectionDropdown;
 
 import static com.runescape.constants.ColourConstants.DEFAULT_TEXT_COLOR;
 
@@ -22,6 +23,13 @@ public class GameModeInterface extends InterfaceBuilder {
 
         addWrappingText(nextInterface(), "Testing wrapped text on a 2006 client for game mode interfaces part one.", defaultTextDrawingAreas, 0, DEFAULT_TEXT_COLOR, false, true, 150);
         child(40, 80);
+
+        String[] options = {"Easy", "Medium", "Hard", "Elite"};
+        dropdownMenu(nextInterface(), 75,0, options, new GameModeSelectionDropdown(), defaultTextDrawingAreas, 0, true);
+        child(40, 150);
+
+
+
 
     }
 }

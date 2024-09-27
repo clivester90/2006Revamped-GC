@@ -4,6 +4,8 @@ import com.*;
 import com.runescape.core.cache.ByteBuffer;
 import com.runescape.core.cache.StreamLoader;
 import com.runescape.constants.ColourConstants;
+import com.runescape.graphics.dropdown.DropdownMenu;
+import com.runescape.graphics.dropdown.MenuItem;
 import com.runescape.item.ItemDef;
 import com.runescape.entity.EntityDef;
 import com.runescape.graphics.sprite.Sprite;
@@ -266,6 +268,9 @@ public class RSInterface {
     public static final int TYPE_SPRITE = 5;
     public static final int TYPE_NEW_HOVER_BUTTON = 9;
     public static final int WRAPPING_TEXT = 10;
+    public static final int TYPE_DROPDOWN = 13;
+    public static final int TYPE_KEYBINDS_DROPDOWN = 15;
+    public static final int AT_ACTION_TYPE_OPTION_DROPDOWN = 7;
 
     private static void printFreeIdRange(int minimumFreeSlotsAvailable){
         for(int i = 0; i < interfaceCache.length; i++){
@@ -476,6 +481,29 @@ public class RSInterface {
         tab.textShadow = shadow;
         tab.textDrawingAreas = tda[idx];
         tab.disabledText = getWrappedText(tab.textDrawingAreas, text, tab.width);
+    }
+
+    public static void dropdownMenu(int id, int width, int defaultOption, String[] options, MenuItem menuItem, TextDrawingArea[] tda, int idx, boolean centerText) {
+        dropdownMenu(id, width, defaultOption, options, menuItem,
+                new int[] { 0x0d0d0b, 0x464644, 0x473d32, 0x51483c, 0x787169 }, centerText, tda, idx);
+    }
+
+    public static void dropdownMenu(int id, int width, int defaultOption, String[] options, MenuItem menuItem, int[] dropdownColours, boolean centerText, TextDrawingArea[] tda, int idx) {
+        RSInterface menu = addInterface(id);
+        menu.type = TYPE_DROPDOWN;
+        menu.textDrawingAreas = tda[idx];
+        menu.dropdown = new DropdownMenu(width, false, defaultOption, options, menuItem);
+        menu.atActionType = AT_ACTION_TYPE_OPTION_DROPDOWN;
+        menu.dropdownColours = dropdownColours;
+        menu.centerText = centerText;
+    }
+
+    public static void keybindingDropdown(int id, int width, int defaultOption, String[] options, MenuItem menuItem, boolean inverted) {
+        RSInterface widget = addInterface(id);
+        widget.type = TYPE_KEYBINDS_DROPDOWN;
+        widget.dropdown = new DropdownMenu(width, true, defaultOption, options, menuItem);
+        widget.atActionType = AT_ACTION_TYPE_OPTION_DROPDOWN;
+        widget.inverted = inverted;
     }
 
     public static void addText(int id, String text, int colour, boolean center, boolean shadow, int mouseTrigger, TextDrawingArea[] tda, int fontSize) {
@@ -730,5 +758,11 @@ public class RSInterface {
     public int modelRotationY;
     public int modelRotationX;
     public int[] childY;
+    public DropdownMenu dropdown;
+    public int[] dropdownColours;
+    public boolean hovered = false;
+    public RSInterface dropdownOpen;
+    public int dropdownHover = -1;
+    public boolean inverted;
 
 }

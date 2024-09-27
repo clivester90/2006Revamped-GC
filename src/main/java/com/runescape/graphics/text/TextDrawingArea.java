@@ -88,7 +88,7 @@ public class TextDrawingArea extends DrawingArea {
 	}
 
 	public void drawText(int colour, int xPos, String s, int yPos, boolean flag) {
-		method389(flag, xPos - getTextWidth(s) / 2, colour, s, yPos);
+		drawText(flag, xPos - getTextWidth(s) / 2, colour, s, yPos);
 	}
 
 	public int getTextWidth(String s) {
@@ -184,37 +184,37 @@ public class TextDrawingArea extends DrawingArea {
 
 	}
 
-	public void method389(boolean flag1, int i, int j, String s, int k) {
+	public void drawText(boolean flag1, int xPos, int colour, String text, int yPos) {
 		aBoolean1499 = false;
-		int l = i;
-		if (s == null) {
+		int l = xPos;
+		if (text == null) {
 			return;
 		}
-		k -= yOffset;
-		for (int i1 = 0; i1 < s.length(); i1++) {
-			if (s.charAt(i1) == '@' && i1 + 4 < s.length() && s.charAt(i1 + 4) == '@') {
-				int j1 = getColorByName(s.substring(i1 + 1, i1 + 4));
+		yPos -= yOffset;
+		for (int i1 = 0; i1 < text.length(); i1++) {
+			if (text.charAt(i1) == '@' && i1 + 4 < text.length() && text.charAt(i1 + 4) == '@') {
+				int j1 = getColorByName(text.substring(i1 + 1, i1 + 4));
 				if (j1 != -1) {
-					j = j1;
+					colour = j1;
 				}
 				i1 += 4;
 			} else {
-				char c = s.charAt(i1);
+				char c = text.charAt(i1);
 				if (c != ' ') {
 					if (flag1) {
-						method392(aByteArrayArray1491[c], i + anIntArray1494[c] + 1, k + anIntArray1495[c] + 1, anIntArray1492[c], anIntArray1493[c], 0);
+						method392(aByteArrayArray1491[c], xPos + anIntArray1494[c] + 1, yPos + anIntArray1495[c] + 1, anIntArray1492[c], anIntArray1493[c], 0);
 					}
 					try {
-					method392(aByteArrayArray1491[c], i + anIntArray1494[c], k + anIntArray1495[c], anIntArray1492[c], anIntArray1493[c], j);
+					method392(aByteArrayArray1491[c], xPos + anIntArray1494[c], yPos + anIntArray1495[c], anIntArray1492[c], anIntArray1493[c], colour);
 					} catch (Exception e) {
 						
 					}
 				}
-				i += anIntArray1496[c];
+				xPos += anIntArray1496[c];
 			}
 		}
 		if (aBoolean1499) {
-			DrawingArea.method339(k + (int) (yOffset * 0.69999999999999996D), 0x800000, i - l, l);
+			DrawingArea.method339(yPos + (int) (yOffset * 0.69999999999999996D), 0x800000, xPos - l, l);
 		}
 	}
 

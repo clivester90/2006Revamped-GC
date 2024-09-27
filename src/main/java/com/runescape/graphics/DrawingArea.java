@@ -169,11 +169,73 @@ public class DrawingArea extends NodeSub {
 
 	}
 
+	public static void drawPixels(int drawHeight, int yPosition, int xPositon, int color, int drawWidth) {
+		if (xPositon < topX) {
+			drawWidth -= topX - xPositon;
+			xPositon = topX;
+		}
+		if (yPosition < topY) {
+			drawHeight -= topY - yPosition;
+			yPosition = topY;
+		}
+		if (xPositon + drawWidth > bottomX)
+			drawWidth = bottomX - xPositon;
+		if (yPosition + drawHeight > bottomY)
+			drawHeight = bottomY - yPosition;
+		int k1 = width - drawWidth;
+		int l1 = xPositon + yPosition * width;
+		for (int i2 = -drawHeight; i2 < 0; i2++) {
+			for (int j2 = -drawWidth; j2 < 0; j2++)
+				pixels[l1++] = color;
+
+			l1 += k1;
+		}
+
+	}
+
 	public static void fillPixels(int i1, int k, int l, int i, int j) {
 		method339(i1, l, j, i);
 		method339(i1 + k - 1, l, j, i);
 		drawVerticalLineNew(i1, l, k, i);
 		drawVerticalLineNew(i1, l, k, i + j - 1);
+	}
+
+	public static void drawAlphaBox(int x, int y, int lineWidth, int lineHeight, int color, int alpha) {// drawAlphaHorizontalLine
+		if (y < topY) {
+			if (y > (topY - lineHeight)) {
+				lineHeight -= (topY - y);
+				y += (topY - y);
+			} else {
+				return;
+			}
+		}
+		if (y + lineHeight > bottomY) {
+			lineHeight -= y + lineHeight - bottomY;
+		}
+		//if (y >= bottomY - lineHeight)
+		//return;
+		if (x < topX) {
+			lineWidth -= topX - x;
+			x = topX;
+		}
+		if (x + lineWidth > bottomX)
+			lineWidth = bottomX - x;
+		for(int yOff = 0; yOff < lineHeight; yOff++) {
+			int i3 = x + (y + (yOff)) * width;
+			for (int j3 = 0; j3 < lineWidth; j3++) {
+				//int alpha2 = (lineWidth-j3) / (lineWidth/alpha);
+				int j1 = 256 - alpha;//alpha2 is for gradient
+				int k1 = (color >> 16 & 0xff) * alpha;
+				int l1 = (color >> 8 & 0xff) * alpha;
+				int i2 = (color & 0xff) * alpha;
+				int j2 = (pixels[i3] >> 16 & 0xff) * j1;
+				int k2 = (pixels[i3] >> 8 & 0xff) * j1;
+				int l2 = (pixels[i3] & 0xff) * j1;
+				int k3 = ((k1 + j2 >> 8) << 16) + ((l1 + k2 >> 8) << 8)
+						+ (i2 + l2 >> 8);
+				pixels[i3++] = k3;
+			}
+		}
 	}
 
 	public static void method338(int i, int j, int k, int l, int i1, int j1) {
