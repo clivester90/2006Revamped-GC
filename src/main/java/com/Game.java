@@ -449,11 +449,11 @@ public class Game extends RSApplet {
 						if (i1 > 0 && i1 < 110) {
 							int j1 = 4;
 							if (byte0 == 1) {
-								modIcons[0].drawBackground(j1, i1 - 12);
+								modIcons[0].drawSprite(j1, i1 - 12);
 								j1 += 14;
 							}
 							if (byte0 == 2) {
-								modIcons[1].drawBackground(j1, i1 - 12);
+								modIcons[1].drawSprite(j1, i1 - 12);
 								j1 += 14;
 							}
 							textDrawingArea.method385(0, s1 + ":", i1, j1);
@@ -468,11 +468,11 @@ public class Game extends RSApplet {
 							textDrawingArea.method385(0, "From", i1, k1);
 							k1 += textDrawingArea.getTextWidth("From ");
 							if (byte0 == 1) {
-								modIcons[0].drawBackground(k1, i1 - 12);
+								modIcons[0].drawSprite(k1, i1 - 12);
 								k1 += 14;
 							}
 							if (byte0 == 2) {
-								modIcons[1].drawBackground(k1, i1 - 12);
+								modIcons[1].drawSprite(k1, i1 - 12);
 								k1 += 14;
 							}
 							textDrawingArea.method385(0, s1 + ":", i1, k1);
@@ -522,8 +522,17 @@ public class Game extends RSApplet {
 				s = TextClass.fixName(myUsername);
 			}
 			//TODO - Implement player crown drawing before chat name
-
-			textDrawingArea.method385(0, s + ":", 90, 4);
+			int xOffset = 0;
+			/*if (myPlayer.hasRightsOtherThan(PlayerRights.PLAYER)) {
+				for (PlayerRights right : myPlayer.getRights()) {
+					modIcons[right.getRightsId() == 1 ? 0 : right.getRightsId()].drawSprite(9 + xOffset, 134 - modIcons[right.getRightsId()].height);
+					xOffset += modIcons[right.getRightsId()].myWidth;
+					xOffset += 2;
+				}
+				textDrawingArea.method385(0, s + ":", 90, 4 + xOffset);
+			} else {*/
+				textDrawingArea.method385(0, s + ":", 90, 4 + xOffset);
+			//}
 			textDrawingArea.method385(255, inputString + "*", 90, 6 + textDrawingArea.getTextWidth(s + ": "));
 			DrawingArea.method339(77, 0, 479, 0);
 		}
@@ -5294,11 +5303,11 @@ public class Game extends RSApplet {
 					textDrawingArea.method385(65535, "From", l - 1, k1);
 					k1 += textDrawingArea.getTextWidth("From ");
 					if (byte1 == 1) {
-						modIcons[0].drawBackground(k1, l - 12);
+						modIcons[0].drawSprite(k1, l - 12);
 						k1 += 14;
 					}
 					if (byte1 == 2) {
-						modIcons[1].drawBackground(k1, l - 12);
+						modIcons[1].drawSprite(k1, l - 12);
 						k1 += 14;
 					}
 					textDrawingArea.method385(0, s + ": " + chatMessages[j], l, k1);
@@ -6868,7 +6877,7 @@ public class Game extends RSApplet {
 			redStone2_4.flipHorizontally();
 			redStone2_4.flipVertically();
 			for (int l4 = 0; l4 < 2; l4++) {
-				modIcons[l4] = new Background(streamLoader_2, "mod_icons", l4);
+				modIcons[l4] = new Sprite(streamLoader_2, "mod_icons", l4);
 			}
 
 			Sprite sprite = new Sprite(streamLoader_2, "backleft1", 0);
@@ -11669,7 +11678,7 @@ public class Game extends RSApplet {
 		anInt1210 = 2;
 		anInt1211 = 78;
 		promptInput = "";
-		modIcons = new Background[2];
+		modIcons = new Sprite[5];
 		tabID = 3;
 		inputTaken = false;
 		songChanging = true;
@@ -12058,7 +12067,7 @@ public class Game extends RSApplet {
 	public int[][][] intGroundArray;
 	public long aLong1215;
 	public int loginScreenCursorPos;
-	public final Background[] modIcons;
+	public final Sprite[] modIcons;
 	public long aLong1220;
 	public int tabID;
 	public int anInt1222;

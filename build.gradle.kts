@@ -33,21 +33,6 @@ repositories {
     maven("https://jitpack.io")
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir("src/main/java")
-        }
-        resources {
-        }
-    }
-    test {
-        java {
-            srcDir("src/test/java")
-        }
-    }
-}
-
 dependencies {
 
     val lombokVersion = "1.18.24"
@@ -121,7 +106,7 @@ tasks {
             attributes["Main-Class"] = "com.runescape.Client"
         }
 
-        shadowJar.get().finalizedBy(obfuscateTask)
+        //shadowJar.get().finalizedBy(obfuscateTask)
     }
 
 }
